@@ -28,7 +28,7 @@ SDL_Surface* gScreenSurface = NULL;
 SDL_Surface* gXOut = NULL;
 
 ///The ball
-SDL_Surface* Ball=NULL;
+SDL_Surface* Ball = NULL;
 ///Ball position
 SDL_Rect rcball;
 
@@ -85,8 +85,8 @@ bool loadMedia()
 	}
 
 	///Ball position
-	rcball.x = 250;
-    rcball.y = 250;
+	rcball.x = 64/2;
+    rcball.y = 480/2;
 
 	return success;
 }
@@ -158,7 +158,7 @@ int main( int argc, char* args[] )
 
 				///Apply the image
 				SDL_BlitSurface( gXOut, NULL, gScreenSurface, NULL );
-				SDL_BlitSurface(Ball, NULL, gScreenSurface, NULL);
+				SDL_BlitSurface(Ball, NULL, gScreenSurface, &rcball);
 
 				///Update the surface
 				SDL_UpdateWindowSurface( gWindow );
