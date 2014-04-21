@@ -117,21 +117,21 @@ int main( int argc, char* args[] )
 					///An event was found
 					switch (event.type)
 					{
-                        ///Close button clicked
-                        case SDL_QUIT:
-                            gameover = 1;
-                            break;
+                        			///Close button clicked
+                        			case SDL_QUIT:
+                            			gameover = 1;
+                            			break;
 
-                        ///Handle the keybord
-                        case SDL_KEYDOWN:
-                            switch (event.key.keysym.sym)
-                            {
-                                case SDLK_ESCAPE:
-                                case SDLK_q:
-                                    gameover = 1;
-                                    break;
-                            }
-                            break;
+                        			///Handle the keybord
+                        			case SDL_KEYDOWN:
+                            				switch (event.key.keysym.sym)
+                            				{
+                                				case SDLK_ESCAPE:
+                                				case SDLK_q:
+                                    				gameover = 1;
+                                    				break;
+                            				}
+                            			break;
 					}
 				}
 
