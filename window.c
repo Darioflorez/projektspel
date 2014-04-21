@@ -1,6 +1,7 @@
 //Using SDL and standard IO
 #include <SDL2/SDL.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 
 
@@ -26,7 +27,13 @@ SDL_Surface* gScreenSurface = NULL;
 ///The image we will load and show on the screen
 SDL_Surface* gXOut = NULL;
 
+///The ball
+SDL_Surface* Ball=NULL;
+///Ball position
+SDL_Rect rcball;
+
 bool init()
+
 {
 	///Initialization flag
 	bool success = true;
@@ -65,9 +72,21 @@ bool loadMedia()
 	gXOut = SDL_LoadBMP( "wall.bmp" );
 	if( gXOut == NULL )
 	{
-		printf( "Unable to load image %s! SDL Error: %s\n", "03_event_driven_programming/x.bmp", SDL_GetError() );
+		printf( "Unable to load image %s! SDL Error: %s\n", "wall.bmp", SDL_GetError() );
 		success = false;
 	}
+
+	///Load a ball
+	Ball = SDL_LoadBMP("ball.bmp");
+	if(Ball == NULL)
+	{
+        printf( "Unable to load image %s! SDL Error: %s\n", "ball.bmp", SDL_GetError() );
+		success = false;
+	}
+
+	///Ball position
+	rcball.x = 250;
+    rcball.y = 250;
 
 	return success;
 }
@@ -77,6 +96,8 @@ void close()
 	///Deallocate surface
 	SDL_FreeSurface( gXOut );
 	gXOut = NULL;
+	SDL_FreeSurface(Ball);
+	Ball = NULL;
 
 	///Destroy window
 	SDL_DestroyWindow( gWindow );
@@ -117,26 +138,27 @@ int main( int argc, char* args[] )
 					///An event was found
 					switch (event.type)
 					{
-                        			///Close button clicked
-                        			case SDL_QUIT:
-                            			gameover = 1;
-                            			break;
+                        ///Close button clicked
+                        case SDL_QUIT:
+                        gameover = 1;
+                        break;
 
-                        			///Handle the keybord
-                        			case SDL_KEYDOWN:
-                            				switch (event.key.keysym.sym)
-                            				{
-                                				case SDLK_ESCAPE:
-                                				case SDLK_q:
-                                    				gameover = 1;
-                                    				break;
-                            				}
-                            			break;
+                        ///Handle the keybord
+                        case SDL_KEYDOWN:
+                        switch (event.key.keysym.sym)
+                        {
+                            case SDLK_ESCAPE:
+                            case SDLK_q:
+                            gameover = 1;
+                            break;
+                        }
+                        break;
 					}
 				}
 
 				///Apply the image
 				SDL_BlitSurface( gXOut, NULL, gScreenSurface, NULL );
+				SDL_BlitSurface(Ball, NULL, gScreenSurface, NULL);
 
 				///Update the surface
 				SDL_UpdateWindowSurface( gWindow );
