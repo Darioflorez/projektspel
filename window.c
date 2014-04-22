@@ -32,8 +32,12 @@ SDL_Surface* Ball = NULL;
 ///Ball position
 SDL_Rect rcball;
 
-bool init()
+///The Player1 (Rect istället för Surface)
+SDL_Surface* Player1;
+///Player1 position
+SDL_Rect rcPlayer1;
 
+bool init()
 {
 	///Initialization flag
 	bool success = true;
@@ -83,10 +87,21 @@ bool loadMedia()
         printf( "Unable to load image %s! SDL Error: %s\n", "ball.bmp", SDL_GetError() );
 		success = false;
 	}
+	///Load a Player1
+	Player1 = SDL_LoadBMP("rectangle1.bmp");
+	if(Player1 == NULL)
+	{
+        printf( "Unable to load image %s! SDL Error: %s\n", "rectangle1.bmp", SDL_GetError() );
+		success = false;
+	}
 
-	///Ball position
-	rcball.x = 64/2;
-    rcball.y = 480/2;
+	///Player1 position
+	rcPlayer1.x = 640/2-75;
+	rcPlayer1.y = 480-50;
+
+	///Ball position (Random skulle passa bättre)
+	rcball.x = 640/2-30;
+    rcball.y = 480/2-30;
 
 	return success;
 }
@@ -159,6 +174,7 @@ int main( int argc, char* args[] )
 				///Apply the image
 				SDL_BlitSurface( gXOut, NULL, gScreenSurface, NULL );
 				SDL_BlitSurface(Ball, NULL, gScreenSurface, &rcball);
+				SDL_BlitSurface(Player1, NULL, gScreenSurface, &rcPlayer1);
 
 				///Update the surface
 				SDL_UpdateWindowSurface( gWindow );
