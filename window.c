@@ -165,13 +165,22 @@ int main( int argc, char* args[] )
                             case SDLK_ESCAPE:
                             case SDLK_q:
                                 gameover = 1;
+                                break;
 
                             case SDLK_LEFT:
                                 rcPlayer1.x -= 10;
+                                if(rcPlayer1.x < 0 )
+                                {
+                                    rcPlayer1.x = 0;
+                                }
                                 break;
 
                             case SDLK_RIGHT:
                                 rcPlayer1.x += 10;
+                                if(rcPlayer1.x > SCREEN_WIDTH - 150)
+                                {
+                                    rcPlayer1.x = SCREEN_WIDTH - 150;
+                                }
                                 break;
 
                         }
