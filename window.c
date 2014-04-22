@@ -124,6 +124,8 @@ void close()
 
 int main( int argc, char* args[] )
 {
+    ///Ball direction
+    int Dir = 0;
 	///Start up SDL and create window
 	if( !init() )
 	{
@@ -188,10 +190,29 @@ int main( int argc, char* args[] )
 					}
 				}
 
+
+
 				///Apply the image
 				SDL_BlitSurface( gXOut, NULL, gScreenSurface, NULL );
 				SDL_BlitSurface(Ball, NULL, gScreenSurface, &rcball);
 				SDL_BlitSurface(Player1, NULL, gScreenSurface, &rcPlayer1);
+
+				if(Dir==0)
+				{
+                    rcball.y -= 2;
+                    if (rcball.y < 0)
+                    {
+                        Dir = 1;
+                    }
+				}
+				if(Dir==1)
+				{
+                    rcball.y += 2;
+                    if (rcball.y > SCREEN_HEIGHT - 30)
+                    {
+                        Dir = 0;
+                    }
+				}
 
 				///Update the surface
 				SDL_UpdateWindowSurface( gWindow );
