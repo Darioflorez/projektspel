@@ -164,8 +164,16 @@ int main( int argc, char* args[] )
                         {
                             case SDLK_ESCAPE:
                             case SDLK_q:
-                            gameover = 1;
-                            break;
+                                gameover = 1;
+
+                            case SDLK_LEFT:
+                                rcPlayer1.x -= 10;
+                                break;
+
+                            case SDLK_RIGHT:
+                                rcPlayer1.x += 10;
+                                break;
+
                         }
                         break;
 					}
