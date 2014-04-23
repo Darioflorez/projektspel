@@ -246,9 +246,28 @@ int main( int argc, char* args[] )
 				SDL_BlitSurface(Player1, NULL, gScreenSurface, &rcPlayer1);
 				SDL_BlitSurface(Player2, NULL, gScreenSurface, &rcPlayer2);
 
+				printf("%d\n", rcPlayer1.x);
+
+				if(rcPlayer1.y == (rcball.y + 45)){
+					if(rcball.x > rcPlayer1.x){
+						if(rcball.x < (rcPlayer1.x + rcPlayer1.w)){
+							Dir=0;
+						}
+					}
+				}
+
+				if(rcPlayer2.y == (rcball.y - 25)){
+					if(rcball.x > rcPlayer2.x){
+						if(rcball.x < (rcPlayer2.x + rcPlayer2.w)){
+							Dir=1;
+						}
+					}
+				}
+
+
 				if(Dir==0)
 				{
-                    rcball.y -= 1;
+                    rcball.y -= 5;
                     if (rcball.y <= 0)
                     {
                         Dir = 1;
@@ -256,8 +275,8 @@ int main( int argc, char* args[] )
 				}
 				if(Dir==1)
 				{
-                    rcball.y += 1;
-                    if (rcball.y >= SCREEN_HEIGHT - 30)
+                    rcball.y += 5;
+                    if (rcball.y >= SCREEN_HEIGHT - 40)
                     {
                         Dir = 0;
                     }
