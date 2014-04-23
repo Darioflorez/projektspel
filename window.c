@@ -88,7 +88,7 @@ bool loadMedia()
 	bool success = true;
 
 	///Load splash image
-	gXOut = SDL_LoadBMP( "black.bmp" );
+	gXOut = SDL_LoadBMP( "bgblack.bmp" );
 	if( gXOut == NULL )
 	{
 		printf( "Unable to load image %s! SDL Error: %s\n", "black.bmp", SDL_GetError() );
@@ -217,6 +217,22 @@ int main( int argc, char* args[] )
                                 }
                                 break;
 
+                            case SDLK_a:
+                                rcPlayer2.x -= 10;
+                                if(rcPlayer2.x < 0 )
+                                {
+                                    rcPlayer2.x = 0;
+                                }
+                                break;
+
+                            case SDLK_d:
+                                rcPlayer2.x += 10;
+                                if(rcPlayer2.x > SCREEN_WIDTH - 150)
+                                {
+                                    rcPlayer2.x = SCREEN_WIDTH - 150;
+                                }
+                                break;
+
                         }
                         break;
 					}
@@ -230,7 +246,7 @@ int main( int argc, char* args[] )
 				SDL_BlitSurface(Player1, NULL, gScreenSurface, &rcPlayer1);
 				SDL_BlitSurface(Player2, NULL, gScreenSurface, &rcPlayer2);
 
-				/*if(Dir==0)
+				if(Dir==0)
 				{
                     rcball.y -= 1;
                     if (rcball.y <= 0)
@@ -245,7 +261,7 @@ int main( int argc, char* args[] )
                     {
                         Dir = 0;
                     }
-				}*/
+				}
 
 				///Update the surface
 				SDL_UpdateWindowSurface( gWindow );
