@@ -52,6 +52,24 @@ SDL_Surface* Player4;
 ///Player4 position
 SDL_Rect rcPlayer4;
 
+bool Collition(struct SDL_Rect player){
+
+	bool success;
+
+	if(player.y == (rcball.y + 45) || player.y == (rcball.y -25)){
+		if((rcball.x + 22) > player.x){
+			if((rcball.x + 22) < (player.x + player.w)){ // Träffat klossen
+				success = true;
+			}
+		}
+	}
+	else{
+		success = false;
+	}
+
+	return success;
+}
+
 bool init()
 {
 	///Initialization flag
@@ -158,6 +176,8 @@ int main( int argc, char* args[] )
 {
     ///Ball direction
     int Dir = 0;
+    /// Träffat kloss
+    bool Collition_detected;
 	///Start up SDL and create window
 	if( !init() )
 	{
@@ -246,29 +266,26 @@ int main( int argc, char* args[] )
 				SDL_BlitSurface(Player1, NULL, gScreenSurface, &rcPlayer1);
 				SDL_BlitSurface(Player2, NULL, gScreenSurface, &rcPlayer2);
 
-				printf("%d\n", rcPlayer1.x);
 
-				if(rcPlayer1.y == (rcball.y + 45)){
-					if(rcball.x > rcPlayer1.x){
-						if(rcball.x < (rcPlayer1.x + rcPlayer1.w)){
-							Dir=0;
-						}
-					}
+				Collition_detected = Collition(rcPlayer1);
+				if(Collition_detected){
+					Dir=0;
+					puts("True");
 				}
 
-				if(rcPlayer2.y == (rcball.y - 25)){
-					if(rcball.x > rcPlayer2.x){
-						if(rcball.x < (rcPlayer2.x + rcPlayer2.w)){
-							Dir=1;
-						}
-					}
+				Collition_detected = Collition(rcPlayer2);
+				if(Collition_detected){
+					Dir=1;
+					puts("True");
 				}
+
 
 
 				if(Dir==0)
 				{
                     rcball.y -= 5;
-                    if (rcball.y <= 0)
+                    //rcball.x -= 3;
+                    if ((rcball.y <= 0) || (rcball.x <= 0))
                     {
                         Dir = 1;
                     }
@@ -276,7 +293,8 @@ int main( int argc, char* args[] )
 				if(Dir==1)
 				{
                     rcball.y += 5;
-                    if (rcball.y >= SCREEN_HEIGHT - 40)
+                    //rcball.x += 1;
+                    if ((rcball.y >= SCREEN_HEIGHT - 40) || (rcball.x >= SCREEN_WIDTH - 40))
                     {
                         Dir = 0;
                     }
