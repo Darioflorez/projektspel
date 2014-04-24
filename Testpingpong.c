@@ -35,7 +35,7 @@ SDL_Surface* Ball = NULL;
 SDL_Rect rcball;
 
 ///Ball direction
-int DirectionX, DirectionY;
+double DirectionX, DirectionY;
 
 ///The Player1
 SDL_Surface* Player1;
@@ -57,27 +57,34 @@ SDL_Surface* Player4;
 ///Player4 position
 SDL_Rect rcPlayer4;
 
-bool Collition(struct SDL_Rect player){
-
-	bool success;
-
-	if(player.y == (rcball.y + 45) || player.y == (rcball.y -25)){
-		if((rcball.x + 22) > player.x){
-			if((rcball.x + 22) < (player.x + player.w)){ // Träffat klossen
-				success = true;
-			}
-		}
-	}
-	else{
-		success = false;
-	}
-
-	return success;
-
 ///Ball random
-int RandomDirection(int max, int min)
+
+///Restart ball
+void RestartBall()
 {
-    return rand() % max + min;
+    rcball.x = SCREEN_WIDTH/2-30;
+    rcball.y = SCREEN_HEIGHT/2-30;
+    if (rand() % 2 + 1 == 1)
+    {
+        DirectionX = rand() %5 +1;
+        DirectionY = sqrt(25 - (DirectionX*DirectionX));
+    }
+    else
+    {
+        DirectionY = rand() %5 +1;
+        DirectionX = sqrt(25 - (DirectionY*DirectionY));
+    }
+
+    if (rand() % 2 + 1 == 1)
+    {
+        DirectionX = -DirectionX;
+    }
+    if (rand() % 2 + 1 == 1)
+    {
+        DirectionY = -DirectionY;
+    }
+    printf("DirecX: %f\n", DirectionX);
+    printf("DirectY: %f\n", DirectionY);
 }
 
 bool init()
@@ -159,9 +166,10 @@ bool loadMedia()
 	rcPlayer2.x = 640/2-75;
 	rcPlayer2.y = 5;
 
-	///Start ball position (Random skulle passa bättre)
-	rcball.x = 640/2-30;
-    rcball.y = 480/2-30;
+	///Start ball position
+    rcball.x = SCREEN_WIDTH/2-30;
+    rcball.y = SCREEN_HEIGHT/2-30;
+
 
 	return success;
 }
@@ -190,14 +198,7 @@ int main( int argc, char* args[] )
 {
     ///Ball direction
     int Dir = 0;
-
-    /// Träffat kloss
-    bool Collition_detected;
-
     srand(time(NULL));
-    DirectionX = RandomDirection(2, -2);
-    DirectionY = RandomDirection(2, -2);
-
 	///Start up SDL and create window
 	if( !init() )
 	{
@@ -218,6 +219,8 @@ int main( int argc, char* args[] )
 			///Event handler
 			SDL_Event event;
 
+            ///Release the ball
+            RestartBall();
 			///While application is running
 			while( !gameover )
 			{
@@ -286,39 +289,21 @@ int main( int argc, char* args[] )
 				SDL_BlitSurface(Player1, NULL, gScreenSurface, &rcPlayer1);
 				SDL_BlitSurface(Player2, NULL, gScreenSurface, &rcPlayer2);
 
+				//printf("%d\n", rcPlayer1.x);
 
-				Collition_detected = Collition(rcPlayer1);
-				if(Collition_detected){
-					Dir=0;
-					puts("True");
-				}
-
-				Collition_detected = Collition(rcPlayer2);
-				if(Collition_detected){
-					Dir=1;
-					puts("True");
-				}
+                ///Collision Detection
 
 
 
-				if(Dir==0)
-				{
-          rcball.y += DirectionY;
-          rcball.x += DirectionX;
-          if (rcball.y <= 0){
-            Dir = 1;
-          }
-				}
 
-				if(Dir==1)
-				{
-          rcball.y -= DirectionY;
-          rcball.x -= DirectionX;
-          if (rcball.y >= SCREEN_HEIGHT - 40)
-          {
-            Dir = 0;
-          }
-				}
+                if(rcball.y < 1 || rcball.y > SCREEN_HEIGHT -40 -1 || rcball.x > SCREEN_WIDTH -40 -1 || rcball.x < 1)
+                {
+                    RestartBall();
+                }
+
+                    rcball.y += DirectionY;
+                    rcball.x += DirectionX;
+
 
 				///Update the surface
 				SDL_UpdateWindowSurface( gWindow );
@@ -331,3 +316,4 @@ int main( int argc, char* args[] )
 
 	return 0;
 }
+

@@ -1,5 +1,5 @@
-//Using SDL and standard IO
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -10,6 +10,7 @@
 ///Screen dimension constants
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
+const int MAX_SPEED_BALL = 5;
 
 ///Starts up SDL and creates window
 bool init();
@@ -57,27 +58,33 @@ SDL_Surface* Player4;
 ///Player4 position
 SDL_Rect rcPlayer4;
 
-bool Collition(struct SDL_Rect player){
-
-	bool success;
-
-	if(player.y == (rcball.y + 45) || player.y == (rcball.y -25)){
-		if((rcball.x + 22) > player.x){
-			if((rcball.x + 22) < (player.x + player.w)){ // Träffat klossen
-				success = true;
-			}
-		}
-	}
-	else{
-		success = false;
-	}
-
-	return success;
-
-///Ball random
-int RandomDirection(int max, int min)
+typedef struct BallDir
 {
-    return rand() % max + min;
+    int dx;
+    int dy;
+} BallDirection;
+
+BallDirection BallDirection_S;
+
+///Restart ball
+void RestartBall()
+{
+    rcball.x = SCREEN_WIDTH/2-30;
+    rcball.y = SCREEN_HEIGHT/2-30;
+    BallDirection_S.dx = (rand() % (MAX_SPEED_BALL * 2)) - MAX_SPEED_BALL;
+    BallDirection_S.dy = (rand() % (MAX_SPEED_BALL * 2)) - MAX_SPEED_BALL;
+
+}
+
+///Move ball
+void MoveBall()
+{
+    rcball.x += BallDirection_S.dx;
+    rcball.y += BallDirection_S.dy;
+    if(rcball.y < 1 || rcball.y > SCREEN_HEIGHT -40 -1 || rcball.x > SCREEN_WIDTH -40 -1 || rcball.x < 1)
+    {
+        RestartBall();
+    }
 }
 
 bool init()
@@ -94,10 +101,10 @@ bool init()
 	else
 	{
 		///Create window
-		gWindow = SDL_CreateWindow( "Ping-Pong", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+		gWindow = SDL_CreateWindow( "Ping-Pong", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 		if( gWindow == NULL )
 		{
-			printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );
+			printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError());
 			success = false;
 		}
 		else
@@ -135,6 +142,11 @@ bool loadMedia()
         printf( "Unable to load image %s! SDL Error: %s\n", "ball.bmp", SDL_GetError() );
 		success = false;
 	}
+
+	SDL_SetColorKey(Ball,
+    SDL_TRUE,
+    (Uint32) SDL_MapRGB(Ball->format,
+    255, 255, 255));
 	///Load a Player1
 	Player1 = SDL_LoadBMP("rectangle_blue.bmp");
 	if(Player1 == NULL)
@@ -158,10 +170,6 @@ bool loadMedia()
 	///Start position Player2
 	rcPlayer2.x = 640/2-75;
 	rcPlayer2.y = 5;
-
-	///Start ball position (Random skulle passa bättre)
-	rcball.x = 640/2-30;
-    rcball.y = 480/2-30;
 
 	return success;
 }
@@ -190,14 +198,7 @@ int main( int argc, char* args[] )
 {
     ///Ball direction
     int Dir = 0;
-
-    /// Träffat kloss
-    bool Collition_detected;
-
     srand(time(NULL));
-    DirectionX = RandomDirection(2, -2);
-    DirectionY = RandomDirection(2, -2);
-
 	///Start up SDL and create window
 	if( !init() )
 	{
@@ -218,6 +219,8 @@ int main( int argc, char* args[] )
 			///Event handler
 			SDL_Event event;
 
+            ///Release the ball
+            RestartBall();
 			///While application is running
 			while( !gameover )
 			{
@@ -286,39 +289,14 @@ int main( int argc, char* args[] )
 				SDL_BlitSurface(Player1, NULL, gScreenSurface, &rcPlayer1);
 				SDL_BlitSurface(Player2, NULL, gScreenSurface, &rcPlayer2);
 
+				//printf("%d\n", rcPlayer1.x);
 
-				Collition_detected = Collition(rcPlayer1);
-				if(Collition_detected){
-					Dir=0;
-					puts("True");
-				}
-
-				Collition_detected = Collition(rcPlayer2);
-				if(Collition_detected){
-					Dir=1;
-					puts("True");
-				}
+                ///Collision Detection
 
 
+                ///Move ball
+                MoveBall();
 
-				if(Dir==0)
-				{
-          rcball.y += DirectionY;
-          rcball.x += DirectionX;
-          if (rcball.y <= 0){
-            Dir = 1;
-          }
-				}
-
-				if(Dir==1)
-				{
-          rcball.y -= DirectionY;
-          rcball.x -= DirectionX;
-          if (rcball.y >= SCREEN_HEIGHT - 40)
-          {
-            Dir = 0;
-          }
-				}
 
 				///Update the surface
 				SDL_UpdateWindowSurface( gWindow );
@@ -331,3 +309,5 @@ int main( int argc, char* args[] )
 
 	return 0;
 }
+
+
