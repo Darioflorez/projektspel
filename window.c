@@ -77,6 +77,7 @@ bool Collition(struct SDL_Rect player){
 }
 
 
+
 ///Ball random
 int RandomDirection(int max, int min)
 {
@@ -196,10 +197,6 @@ int main( int argc, char* args[] )
 
     /// Träffat kloss
     bool Collition_detected;
-
-    srand(time(NULL));
-    DirectionX = RandomDirection(2, -2);
-    DirectionY = RandomDirection(2, -2);
 
     srand(time(NULL));
     DirectionX = RandomDirection(2, -2);
