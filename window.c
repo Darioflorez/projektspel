@@ -57,6 +57,7 @@ SDL_Surface* Player4;
 ///Player4 position
 SDL_Rect rcPlayer4;
 
+
 bool Collition(struct SDL_Rect player){
 
 	bool success;
@@ -73,6 +74,8 @@ bool Collition(struct SDL_Rect player){
 	}
 
 	return success;
+}
+
 
 ///Ball random
 int RandomDirection(int max, int min)
@@ -198,6 +201,10 @@ int main( int argc, char* args[] )
     DirectionX = RandomDirection(2, -2);
     DirectionY = RandomDirection(2, -2);
 
+    srand(time(NULL));
+    DirectionX = RandomDirection(2, -2);
+    DirectionY = RandomDirection(2, -2);
+
 	///Start up SDL and create window
 	if( !init() )
 	{
@@ -305,29 +312,32 @@ int main( int argc, char* args[] )
 				{
           rcball.y += DirectionY;
           rcball.x += DirectionX;
-          if (rcball.y <= 0){
-            Dir = 1;
+          if (rcball.y <= 0)
+          {
+          	Dir = 1;
           }
 				}
 
 				if(Dir==1)
 				{
-          rcball.y -= DirectionY;
-          rcball.x -= DirectionX;
-          if (rcball.y >= SCREEN_HEIGHT - 40)
-          {
-            Dir = 0;
-          }
-				}
+        rcball.y -= DirectionY;
+        rcball.x -= DirectionX;
+        if (rcball.y >= SCREEN_HEIGHT - 40)
+        {
+          Dir = 0;
+        }
 
 				///Update the surface
 				SDL_UpdateWindowSurface( gWindow );
+				}
+
 			}
+
 		}
-	}
 
 	///Free resources and close SDL
 	close();
 
 	return 0;
+	}
 }
