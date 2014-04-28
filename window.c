@@ -1,9 +1,9 @@
-//Using SDL and standard IO
 #include <SDL2/SDL.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <time.h>
+#include <SDL2/SDL_ttf.h>
 
 
 
@@ -57,6 +57,11 @@ SDL_Surface* Player4;
 ///Player4 position
 SDL_Rect rcPlayer4;
 
+///TTF
+SDL_Surface* text = NULL;
+TTF_Font* font = NULL;
+SDL_Color color = {255,255,255};
+
 ///Ball random
 int RandomDirection(int max, int min)
 {
@@ -88,6 +93,10 @@ bool init()
 			///Get window surface
 			gScreenSurface = SDL_GetWindowSurface( gWindow );
 		}
+	}
+	if (TTF_Init() == -1)
+	{
+        return false;
 	}
 
 	return success;
@@ -134,6 +143,18 @@ bool loadMedia()
 		success = false;
 	}
 
+	 font = TTF_OpenFont("Jura-Regular.ttf", 32);
+    if(font == NULL)
+    {
+        return false;
+    }
+
+	text = TTF_RenderText_Solid(font, "Hello world", color);
+    if(text == NULL)
+    {
+        return -1;
+    }
+
 	///Start position Player1
 	rcPlayer1.x = 640/2-75;
 	rcPlayer1.y = 480-30;
@@ -156,15 +177,18 @@ void close()
 	SDL_FreeSurface(Ball);
 	SDL_FreeSurface(Player1);
 	SDL_FreeSurface(Player2);
+	SDL_FreeSurface(text);
 	gXOut = NULL;
 	Ball = NULL;
 	Player1 = NULL;
 	Player2 = NULL;
 
+	TTF_CloseFont(font);
 	///Destroy window
 	SDL_DestroyWindow( gWindow );
 	gWindow = NULL;
 
+    TTF_Quit();
 	///Quit SDL subsystems
 	SDL_Quit();
 }
@@ -177,7 +201,8 @@ int main( int argc, char* args[] )
     srand(time(NULL));
     DirectionX = RandomDirection(2, -2);
     DirectionY = RandomDirection(2, -2);
-	///Start up SDL and create window
+
+    ///Start up SDL and create window
 	if( !init() )
 	{
 		printf( "Failed to initialize!\n" );
@@ -264,6 +289,7 @@ int main( int argc, char* args[] )
 				SDL_BlitSurface(Ball, NULL, gScreenSurface, &rcball);
 				SDL_BlitSurface(Player1, NULL, gScreenSurface, &rcPlayer1);
 				SDL_BlitSurface(Player2, NULL, gScreenSurface, &rcPlayer2);
+				SDL_BlitSurface(text, NULL, gScreenSurface, &rcPlayer1);
 
 				//printf("%d\n", rcPlayer1.x);
 

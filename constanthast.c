@@ -4,23 +4,16 @@
 #include <math.h>
 #include <unistd.h>
 
-int main()
+#define PI 3.14159265
+
+   int main ()
 {
-    double x,y;
-    double resultat;
-    srand(time(NULL));
-    while(1)
-    {
-        x = rand() %5 +1;
+   double x, ret, val;
+   int p;
 
+   x = 4.9876
+   p = x;
+   printf("p: %d");
 
-        y = sqrt(25-(x*x));
-
-
-        printf("Y: %f\n", y);
-        printf("X: %f\n", x);
-        sleep(1);
-
-    }
-    return 0;
+   return(0);
 }

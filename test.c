@@ -66,21 +66,29 @@ typedef struct BallDir
 
 BallDirection BallDirection_S;
 
+int vel=5;
+int angle;
+int scale_x =10, scale_y;
+
 ///Restart ball
 void RestartBall()
 {
+    printf("COS: %d ", scale_x);
     rcball.x = SCREEN_WIDTH/2-30;
     rcball.y = SCREEN_HEIGHT/2-30;
-    BallDirection_S.dx = (rand() % (MAX_SPEED_BALL * 2)) - MAX_SPEED_BALL;
-    BallDirection_S.dy = (rand() % (MAX_SPEED_BALL * 2)) - MAX_SPEED_BALL;
+    angle = rand() % 360 +1;
+    scale_x = cos(angle);
+    scale_y = sin(angle);
+
 
 }
 
 ///Move ball
 void MoveBall()
 {
-    rcball.x += BallDirection_S.dx;
-    rcball.y += BallDirection_S.dy;
+    rcball.x += scale_x * vel;
+    rcball.y += scale_y * vel;
+
     if(rcball.y < 1 || rcball.y > SCREEN_HEIGHT -40 -1 || rcball.x > SCREEN_WIDTH -40 -1 || rcball.x < 1)
     {
         RestartBall();

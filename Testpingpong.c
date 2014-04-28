@@ -1,16 +1,21 @@
-//Using SDL and standard IO
 #include <SDL2/SDL.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
+#include <unistd.h>
 
 
 
 ///Screen dimension constants
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
-
+const double    PI = 3.14159265;
+const int FRAME_PER_SECOND = 40;
+int Intervall;
+///Time controll
+int NextTick;
 ///Starts up SDL and creates window
 bool init();
 
@@ -58,40 +63,66 @@ SDL_Surface* Player4;
 SDL_Rect rcPlayer4;
 
 ///Ball random
+double vel=2;
+double angle;
+double scale_x, scale_y;
+double Resultante;
+double Vel_x, Vel_y;
+int i = 0;
+///Make the ball move smoothly
+int StartPosition_x, StartPosition_y;
 
 ///Restart ball
 void RestartBall()
 {
+    i = 0;
+    printf("\nRCBALL.X: %d ", rcball.x);
+    printf("\nRCBALL.Y: %d ", rcball.y);
     rcball.x = SCREEN_WIDTH/2-30;
     rcball.y = SCREEN_HEIGHT/2-30;
-    if (rand() % 2 + 1 == 1)
-    {
-        DirectionX = rand() %5 +1;
-        DirectionY = sqrt(25 - (DirectionX*DirectionX));
-    }
-    else
-    {
-        DirectionY = rand() %5 +1;
-        DirectionX = sqrt(25 - (DirectionY*DirectionY));
-    }
+    angle = rand() % 361;
+    scale_x = cos((PI*angle)/180);
+    scale_y = (sin((PI*angle)/180))*(-1);
+    Vel_x = scale_x * vel;
+    Vel_y = scale_y * vel;
+    StartPosition_x = rcball.x;
+    StartPosition_y = rcball.y;
+    Resultante = sqrt((scale_x*scale_x)+(scale_y*scale_y));
+    printf("\nANGLE: %f ", angle);
+    printf("\nSIN: %f ", scale_y);
+    printf("\nCOS: %f ", scale_x);
+    printf("\nRESULANTE: %f ", Resultante);
+}
 
-    if (rand() % 2 + 1 == 1)
+void MoveBall()
+{
+        rcball.x = StartPosition_x + (Vel_x + (Vel_x * i));
+        rcball.y = StartPosition_y + (Vel_y + (Vel_y * i));
+        i++;
+
+}
+
+void FPS_Init()
+{
+    NextTick = 0;
+    Intervall = 1*1000/FRAME_PER_SECOND;
+    return;
+}
+
+void FPS_Fn()
+{
+    if(NextTick > SDL_GetTicks())
     {
-        DirectionX = -DirectionX;
+        SDL_Delay(NextTick - SDL_GetTicks());
     }
-    if (rand() % 2 + 1 == 1)
-    {
-        DirectionY = -DirectionY;
-    }
-    printf("DirecX: %f\n", DirectionX);
-    printf("DirectY: %f\n", DirectionY);
+    NextTick = SDL_GetTicks() + Intervall;
 }
 
 bool init()
 {
+
 	///Initialization flag
 	bool success = true;
-
 	///Initialize SDL
 	if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
 	{
@@ -199,6 +230,9 @@ int main( int argc, char* args[] )
     ///Ball direction
     int Dir = 0;
     srand(time(NULL));
+
+
+
 	///Start up SDL and create window
 	if( !init() )
 	{
@@ -218,7 +252,8 @@ int main( int argc, char* args[] )
 
 			///Event handler
 			SDL_Event event;
-
+            ///Initialize Frames per second
+            FPS_Init();
             ///Release the ball
             RestartBall();
 			///While application is running
@@ -289,22 +324,20 @@ int main( int argc, char* args[] )
 				SDL_BlitSurface(Player1, NULL, gScreenSurface, &rcPlayer1);
 				SDL_BlitSurface(Player2, NULL, gScreenSurface, &rcPlayer2);
 
-				//printf("%d\n", rcPlayer1.x);
-
                 ///Collision Detection
 
 
 
 
-                if(rcball.y < 1 || rcball.y > SCREEN_HEIGHT -40 -1 || rcball.x > SCREEN_WIDTH -40 -1 || rcball.x < 1)
+                if(rcball.y < 1 || rcball.y > SCREEN_HEIGHT -45 - 1 || rcball.x > SCREEN_WIDTH -45 - 1 || rcball.x < 1)
                 {
                     RestartBall();
                 }
+                else
+                MoveBall();
 
-                    rcball.y += DirectionY;
-                    rcball.x += DirectionX;
 
-
+                FPS_Fn();
 				///Update the surface
 				SDL_UpdateWindowSurface( gWindow );
 			}
